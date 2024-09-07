@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Image Gallery</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f8f9fa;
+      }
+
+      .gallery-container {
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 20px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .filter-buttons {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .filter-buttons button {
+        padding: 12px 24px;
+        margin: 5px;
+        cursor: pointer;
+        border: 1px solid #007bff;
+        background-color: #fff;
+        color: #007bff;
+        border-radius: 5px;
+        font-size: 16px;
+        transition: all 0.3s;
+      }
+
+      .filter-buttons button:hover {
+        background-color: #007bff;
+        color: #fff;
+      }
+
+      .filter-buttons button.active {
+        background-color: #007bff;
+        color: #fff;
+      }
+
+      .image-gallery {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+      }
+
+      .image-item {
+        position: relative;
+        overflow: hidden;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s;
+      }
+
+      .image-gallery img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        transition: transform 0.3s;
+        border-bottom: 2px solid #007bff;
+      }
+
+      .image-gallery img:hover {
+        transform: scale(1.05);
+      }
+
+      .image-caption {
+        text-align: center;
+        padding: 10px;
+        font-size: 16px;
+        color: #333;
+        background-color: #f0f0f0;
+      }
+
+      .lightbox {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 999;
+        animation: fadeIn 0.5s;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .lightbox img {
+        max-width: 90%;
+        max-height: 90%;
+        border-radius: 8px;
+      }
+
+      .close {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        color: #fff;
+        font-size: 36px;
+        cursor: pointer;
+        z-index: 1000;
+        transition: color 0.3s;
+      }
+
+      .close:hover {
+        color: #007bff;
+      }
+
+      .pagination {
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      .pagination button {
+        padding: 12px 20px;
+        margin: 0 5px;
+        cursor: pointer;
+        border: 1px solid #007bff;
+        background-color: #fff;
+        color: #007bff;
+        border-radius: 5px;
+        font-size: 16px;
+        transition: all 0.3s;
+      }
+
+      .pagination button:hover {
+        background-color: #007bff;
+        color: #fff;
+      }
+
+      .pagination button.disabled {
+        background-color: #e9ecef;
+        color: #6c757d;
+        cursor: not-allowed;
+        border: 1px solid #e9ecef;
+      }
+
+      @media (max-width: 600px) {
+        .image-gallery {
+          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        }
+      }
+
+      .no-images-message {
+        text-align: center;
+        font-size: 18px;
+        color: #dc3545;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="gallery-container">
+      <div class="filter-buttons">
+        <button data-filter="all" class="active">All</button>
+        <button data-filter="folder 1">Folder 1</button>
+        <button data-filter="folder 2">Folder 2</button>
+      </div>
+
+      <div class="image-gallery">
+        <div class="image-item" data-category="folder 1">
+          <img
+            src="https://www.shutterstock.com/image-photo/afghanistan-national-flag-waving-sky-260nw-2508266223.jpg"
+            alt="Image 1"
+          />
+          <div class="image-caption">Flag</div>
+        </div>
+        <div class="image-item" data-category="folder 2">
+          <img
+            src="https://www.shutterstock.com/image-photo/bande-amir-national-park-bandi-600nw-2208863495.jpg"
+            alt="Image 2"
+          />
+          <div class="image-caption">Band-e Amir</div>
+        </div>
+        <div class="image-item" data-category="folder 1">
+          <img
+            src="https://i0.wp.com/live.staticflickr.com/3405/3442742715_05da6a7a74_b.jpg?resize=650,400"
+            alt="Image 3"
+          />
+          <div class="image-caption">Dance</div>
+        </div>
+        <div class="image-item" data-category="folder 2">
+          <img
+            src="https://pbs.twimg.com/media/FcchurFWYAMy9fm?format=jpg&name=large"
+            alt="Image 4"
+          />
+          <div class="image-caption">Khost Mosque</div>
+        </div>
+        <div class="image-item" data-category="folder 1">
+          <img
+            src="https://i.pinimg.com/736x/53/94/75/539475b789e78498b2e3aebd472b8941.jpg"
+            alt="Image 5"
+          />
+          <div class="image-caption">Beautiful Girl</div>
+        </div>
+        <div class="image-item" data-category="folder 2">
+          <img
+            src="https://adventuresoflilnicki.com/wp-content/uploads/2021/09/Istalif-Ceramics-Istalif-Shomali-Plain-Afghanistan-3.jpg"
+            alt="Image 6"
+          />
+          <div class="image-caption">Ceramics</div>
+        </div>
+        <div class="image-item" data-category="folder 1">
+          <img
+            src="https://media.cnn.com/api/v1/images/stellar/prod/210826112433-sara-rahmani-artwork-afghanistan.jpg?q=w_1600,h_2133,x_0,y_0,c_fill"
+            alt="Image 7"
+          />
+          <div class="image-caption">Wonderful Painting</div>
+        </div>
+        <div class="image-item" data-category="folder 2">
+          <img
+            src="https://media-cdn.tripadvisor.com/media/photo-s/17/01/e3/48/citadel-of-herat-march.jpg"
+            alt="Image 8"
+          />
+          <div class="image-caption">Citadel of Herat</div>
+        </div>
+      </div>
+
+      <div class="pagination">
+        <button class="prev disabled">Previous</button>
+        <button class="next">Next</button>
+      </div>
+
+      <div class="no-images-message" style="display: none">
+        No images available.
+      </div>
+    </div>
+
+    <div class="lightbox">
+      <span class="close">&times;</span>
+      <img />
+    </div>
+
+    <script>
+      const images = document.querySelectorAll(".image-gallery img");
+      const lightbox = document.querySelector(".lightbox");
+      const lightboxImg = document.querySelector(".lightbox img");
+      const closeBtn = document.querySelector(".lightbox .close");
+
+      images.forEach((image) => {
+        image.addEventListener("click", () => {
+          lightboxImg.src = image.src;
+          lightbox.style.display = "flex";
+          document.body.style.overflow = "hidden";
+        });
+      });
+
+      closeBtn.addEventListener("click", () => {
+        lightbox.style.display = "none";
+        document.body.style.overflow = "";
+      });
+
+      const filterButtons = document.querySelectorAll(".filter-buttons button");
+      const imageItems = document.querySelectorAll(".image-item");
+      const noImagesMessage = document.querySelector(".no-images-message");
+
+      filterButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          filterButtons.forEach((btn) => btn.classList.remove("active"));
+          button.classList.add("active");
+
+          const filter = button.getAttribute("data-filter");
+          let hasVisibleImages = false;
+
+          imageItems.forEach((item) => {
+            if (
+              filter === "all" ||
+              item.getAttribute("data-category") === filter
+            ) {
+              item.style.display = "block";
+              hasVisibleImages = true;
+            } else {
+              item.style.display = "none";
+            }
+          });
+
+          noImagesMessage.style.display = hasVisibleImages ? "none" : "block";
+        });
+      });
+
+      const paginationButtons = document.querySelectorAll(".pagination button");
+      const itemsPerPage = 4;
+      let currentPage = 1;
+
+      function showPage(page) {
+        const start = (page - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+
+        imageItems.forEach((item, index) => {
+          item.style.display = index >= start && index < end ? "block" : "none";
+        });
+
+        document
+          .querySelector(".prev")
+          .classList.toggle("disabled", page === 1);
+        document
+          .querySelector(".next")
+          .classList.toggle("disabled", end >= imageItems.length);
+      }
+
+      document.querySelector(".prev").addEventListener("click", () => {
+        if (currentPage > 1) {
+          currentPage--;
+          showPage(currentPage);
+        }
+      });
+
+      document.querySelector(".next").addEventListener("click", () => {
+        if (currentPage * itemsPerPage < imageItems.length) {
+          currentPage++;
+          showPage(currentPage);
+        }
+      });
+
+      showPage(currentPage);
+    </script>
+  </body>
+</html>
